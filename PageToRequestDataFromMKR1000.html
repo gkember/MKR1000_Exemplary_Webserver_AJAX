@@ -1,0 +1,54 @@
+﻿<!DOCTYPE html>
+<html>
+<head> 
+<title> Web Page to Request and Display Accelero Data from MKR1000. AJAX </title>
+</head>    
+<body>
+
+    <div id="demo">
+        <h1>This webpage uses AJAX to fetch X,Y,Z and update parts of this web page. 
+            XYZ are fetched by periodic polling but you can request X, Y, Z, or XYZ 
+            by clicking the buttons.
+        </h1>
+        IP address of MKR1000: <input type="text" id="ipadd" size="20" name="fname"><br>
+		<button type="button" onclick="loadDoc('X','B')">Get X</button>
+		<button type="button" onclick="loadDoc('Y','B')">Get Y</button>
+        <button type="button" onclick="loadDoc('Z','B')">Get Y</button>
+		<button type="button" onclick="loadDoc('XYZ','B')">Get X, Y, Z</button>
+		<h2>Fetched values by clicking buttons.</h2>
+        <p id="buttonpolling"> </p>
+        <h2>Fetched values by timed polling.</h2>
+        <p id="clock"> </p>
+        <p id="timedpolling"> </p>
+        
+    </div>
+
+    <script>
+      var myVar = setInterval(function(){ myTimer() }, 1000);      
+      function myTimer() {
+         var d = new Date();
+         var t = d.toLocaleTimeString();
+         document.getElementById("clock").innerHTML = t;
+         loadDoc('XYZ','T');  
+      }
+          
+      function loadDoc(val, polling) {
+         var xhttp = new XMLHttpRequest();
+         xhttp.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+               if(polling == 'B')    
+                 document.getElementById("buttonpolling").innerHTML = this.responseText;
+               else
+                 document.getElementById("timedpolling").innerHTML = this.responseText;                
+            }
+         };
+         /* Build the request.*/      
+	     URLStr = "http://"+document.getElementById("ipadd").value+"/";//"http://192.168.8.110/";//"http://172.20.10.11/";
+	     URLStr = URLStr + val;//"XYZ";
+	     xhttp.open("GET", URLStr, true);
+         xhttp.send();
+      }
+</script>
+
+</body>
+</html>
